@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Don't Press the Button</title>
+<meta name="description" content="50 troll levels where the instructions lie. Don't press the button. Or do?">
+<meta property="og:title" content="Don't Press the Button">
+<meta property="og:description" content="50 troll levels where the instructions lie. Bet you can't beat it.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='40' rx='26' ry='14' fill='%23900'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='14' fill='%23e31b1b' stroke='%23300' stroke-width='3'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:#111;font-family:"Nunito","Arial Rounded MT Bold","Segoe UI",system-ui,-apple-system,Arial,sans-serif;-webkit-user-select:none;user-select:none;touch-action:manipulation;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:#111;cursor:pointer}
+#app{max-width:560px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;padding:8px 10px 10px}
+.hud{display:flex;gap:6px;align-items:center;font-weight:800;font-size:13px}
+.chip{border:2px solid #111;border-radius:999px;padding:4px 10px;background:#fff;font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap}
+.chip.icon{padding:3px 7px;display:flex}
+.hud .sp{flex:1}
+#deathChip b{color:#e31b1b}
+.bump{animation:bump .4s}
+@keyframes bump{40%{transform:scale(1.3)}}
+h1.title{margin:8px 0 0;text-align:center;font-weight:900;font-size:clamp(30px,9.6vw,50px);line-height:1.05;letter-spacing:-1px}
+.title .ch{display:inline-block;cursor:pointer;transition:transform .1s}
+.title .ch:active{transform:scale(.88)}
+.title .tr{color:#e31b1b;-webkit-text-stroke:1.5px #111;text-shadow:3px 3px 0 #111}
+.title .tthe{font-size:.5em;font-style:italic;color:#111;border-bottom:3px solid #111;margin:0 .1em;vertical-align:.25em}
+.title .tb{color:#fff;-webkit-text-stroke:1.8px #111;text-shadow:3px 3px 0 #111}
+.title .sus{animation:sus 1.4s infinite}
+@keyframes sus{50%{transform:scale(1.14) rotate(-6deg);text-shadow:0 0 12px #ff5050,3px 3px 0 #111}}
+.wob{animation:wob .4s}
+@keyframes wob{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.rule{display:flex;align-items:center;gap:8px;margin:4px 6% 2px}
+.rule span{flex:1;height:3px;background:#111;border-radius:3px}
+.card{border:3px solid #111;border-radius:14px;padding:8px 12px;font-weight:900;font-size:clamp(15px,4.6vw,20px);text-align:center;margin:6px 0 4px;box-shadow:3px 3px 0 #111;background:#fff}
+.card.in{animation:cardin .35s}
+@keyframes cardin{from{transform:translateY(-8px) scale(.96);opacity:.3}}
+.r{color:#e31b1b}
+#lvtext [data-k]{cursor:pointer}
+.flip{display:inline-block;transform:rotate(180deg)}
+#hintbox{font-size:13px;font-weight:700;background:#fff7d6;border:2px dashed #111;border-radius:10px;padding:5px 9px;margin-bottom:4px}
+.wrap{position:relative;flex:1;min-height:300px}
+#stage{position:absolute;inset:0;overflow:hidden}
+#stage.boom{animation:boom .5s}
+@keyframes boom{0%{background:#ffb000}20%{transform:translate(-8px,4px)}40%{transform:translate(8px,-4px)}60%{transform:translate(-4px,2px)}100%{background:#fff}}
+.narr{position:absolute;left:0;bottom:2px;width:84px;height:134px;z-index:5;cursor:pointer}
+.narr svg{overflow:visible;transform-origin:50% 100%}
+.narr .shut,.narr .zzz{display:none}
+.narr.asleep .eyes,.narr.asleep .sw,.narr.asleep .brow{display:none}
+.narr.asleep .shut,.narr.asleep .zzz{display:block}
+.narr.sleepy svg{transform:rotate(-7deg)}
+.narr.panic svg{animation:panic .45s}
+@keyframes panic{20%{transform:translateX(-5px) rotate(-5deg)}40%{transform:translateX(5px) rotate(5deg)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.narr.jump{animation:jump .75s ease-in-out}
+@keyframes jump{45%{transform:translate(4px,var(--jy,-180px))}100%{transform:none}}
+.sw{animation:drip 1.6s infinite}
+.sw.s2{animation-delay:.8s}
+@keyframes drip{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(12px);opacity:0}}
+.zzz{animation:zz 1.5s infinite}
+@keyframes zz{50%{transform:translate(4px,-6px)}}
+.bubble{position:absolute;left:4px;bottom:146px;z-index:6;max-width:58%;background:#fff;border:3px solid #111;border-radius:18px;padding:7px 11px;font-weight:800;font-size:14px;line-height:1.2;pointer-events:none}
+.bubble:after{content:'';position:absolute;left:30px;bottom:-12px;width:16px;height:16px;background:#fff;border-right:3px solid #111;border-bottom:3px solid #111;transform:rotate(45deg) skew(10deg,10deg)}
+.bubble.pop{animation:pop .25s}
+@keyframes pop{from{transform:scale(.85);opacity:.4}}
+.controls{display:flex;gap:8px;padding-top:6px}
+.controls button,.box button,.ov .row button{border:3px solid #111;border-radius:12px;background:#fff;font-weight:900;font-size:14px;padding:10px 6px;box-shadow:3px 3px 0 #111}
+.controls button{flex:1}
+.controls button:active,.box button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #111}
+.controls small{font-weight:700;opacity:.65}
+.share,.box .share{background:#e31b1b!important;color:#fff!important}
+/* big button */
+.bigbtn{position:absolute;left:62%;top:48%;width:clamp(150px,44vw,220px);aspect-ratio:10/7;transform:translate(-50%,-50%) scale(var(--s,1));border:0;background:none;padding:0;cursor:pointer;outline:none;z-index:2;-webkit-touch-callout:none;transition:filter .3s,left .25s,top .25s}
+.bigbtn.dragging,.bigbtn.nomove{transition:filter .3s}
+.bigbtn .base{position:absolute;left:-8%;right:-8%;top:44%;bottom:-8%;border-radius:50%;background:radial-gradient(closest-side,#b8b8b8,#dcdcdc 65%,rgba(230,230,230,0))}
+.bigbtn.noshadow .base{display:none}
+.bigbtn .side{position:absolute;left:0;right:0;top:27%;bottom:8%;background:linear-gradient(90deg,#7d0000,#c40c0c 15%,#f23030 42%,#e01414 65%,#a10404 88%,#6d0000);border:3px solid #3a0000;border-top:none;border-radius:0 0 50% 50%/0 0 34% 34%}
+.bigbtn .top{position:absolute;left:0;right:0;top:0;height:54%;border-radius:50%;background:radial-gradient(ellipse 60% 55% at 42% 38%,#ff9b9b 0,#ff3a3a 30%,#e41010 65%,#b80000 100%);border:3px solid #3a0000;display:flex;align-items:center;justify-content:center;transition:transform .07s;box-shadow:inset 0 -6px 10px rgba(120,0,0,.45)}
+.bigbtn .top:before{content:'';position:absolute;left:18%;top:13%;width:36%;height:26%;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(2px);transform:rotate(-8deg)}
+.bigbtn.down .top,.bigbtn:active .top{transform:translateY(22%)}
+.bigbtn .lbl{position:relative;color:#fff;font-weight:900;font-size:clamp(13px,3.8vw,19px);text-shadow:0 2px 0 #700;letter-spacing:.5px;white-space:nowrap}
+.bigbtn.grey{filter:grayscale(1) brightness(1.1)}
+.bigbtn.flash{animation:flash .45s infinite}
+@keyframes flash{50%{filter:brightness(1.5) saturate(1.4)}}
+.bigbtn.wig{animation:wig .25s}
+@keyframes wig{30%{margin-left:-10px;rotate:-6deg}70%{margin-left:10px;rotate:6deg}}
+.bigbtn.hit{animation:hit .3s}
+@keyframes hit{30%{filter:brightness(2)}}
+.mini{position:absolute;width:76px;height:76px;transform:translate(-50%,-50%);border-radius:50%;border:3px solid #3a0000;background:radial-gradient(circle at 38% 32%,#ff9b9b 0,#ff3030 32%,#d00 70%,#a00 100%);box-shadow:0 6px 0 #800,0 9px 0 #111;filter:hue-rotate(var(--h,0deg));transition:left .35s,top .35s;z-index:2;padding:0}
+.mini span{color:#fff;font-weight:900;font-size:13px;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.mini:active{box-shadow:0 2px 0 #800,0 4px 0 #111;margin-top:4px}
+.mini.glow{box-shadow:0 0 0 6px #ffd000,0 0 26px 8px #ffd000,0 6px 0 #800}
+.shadow{position:absolute;width:clamp(170px,50vw,250px);height:62px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,#9a9a9a,#c8c8c8 60%,rgba(220,220,220,0));cursor:pointer;z-index:1}
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.93);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ov[hidden]{display:none}
+.box{background:#fff;border:3px solid #111;border-radius:18px;box-shadow:5px 5px 0 #111;padding:18px;max-width:380px;width:100%;text-align:center;position:relative}
+.box p{font-weight:800;font-size:17px;line-height:1.3;margin:10px 0 14px}
+.mh{font-weight:900;font-size:38px;letter-spacing:-1px;-webkit-text-stroke:1.5px #111;text-shadow:3px 3px 0 #111}
+.mh.fail{color:#e31b1b}.mh.win{color:#ffd000}
+.box .big{width:100%;font-size:18px;padding:13px;background:#e31b1b;color:#fff}
+.row{display:flex;gap:8px;margin-top:10px}.row button{flex:1}
+#adOv{z-index:60;background:rgba(0,0,0,.85)}
+#adOv .box{border-color:#000}
+.adtag{position:absolute;left:10px;top:8px;background:#ffd000;font-weight:900;font-size:11px;padding:2px 6px;border-radius:4px}
+.adcount{font-weight:900;font-size:16px;padding:12px;border:2px dashed #999;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:12px 0;max-height:52vh;overflow:auto;padding:4px}
+.cell{aspect-ratio:1;border:3px solid #111;border-radius:10px;background:#fff;font-weight:900;font-size:16px;box-shadow:2px 2px 0 #111}
+.cell.done{background:#ffe1e1}.cell.cur{background:#e31b1b;color:#fff}
+.cell.lock{opacity:.35;box-shadow:none}
+#toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,30px);background:#111;color:#fff;font-weight:800;padding:10px 16px;border-radius:999px;opacity:0;transition:.25s;z-index:80;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.stats{display:flex;gap:8px;margin:6px 0 14px}.stats div{flex:1;border:2px solid #111;border-radius:10px;padding:6px;font-size:12px;font-weight:700}.stats b{display:block;font-size:20px}
+.confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.confetti i{position:absolute;top:-20px;width:10px;height:14px;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.end .box{z-index:1}
+.dot{color:#e31b1b;font-size:1.4em;cursor:pointer;padding:0 4px}
+.credits{display:block;margin-top:10px;font-weight:700;opacity:.6}
+/* level widgets */
+.abs,.fakead,.legit,.meter,.inrow,.dlg,.item,.kb,.counter,.upsell,.slots,.tile,.secret,.digit,.opt,.clock,.palette,.prog,.pad,.err,.note,.socket,.plug,.knob,.star,.cmd,.pad2,.word,.tag,.lbar,.lknob,.captcha,.hp{position:absolute;transform:translate(-50%,-50%);z-index:3}
+.fakead{width:64%;height:72%;left:62%;top:50%;background:linear-gradient(135deg,#fff3b0,#ffd36b);border:3px solid #111;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center;cursor:pointer}
+.spons{position:absolute;left:8px;top:6px;font-size:10px;font-weight:800;opacity:.6}
+.adx{position:absolute;right:6px;top:4px;border:0;background:none;font-size:18px;opacity:.5;padding:2px 6px}
+.adh{font-weight:900;font-size:clamp(20px,6vw,30px);color:#e31b1b;-webkit-text-stroke:1px #111}
+.ads{font-weight:800;font-size:13px;margin:4px 0 40px}
+.skip{position:absolute;right:8px;bottom:8px;display:flex;gap:8px;align-items:center;background:#fff;border:3px solid #111;border-radius:10px;padding:6px 10px;text-align:left;font-size:13px;line-height:1.1}
+.skip .tri{width:0;height:0;border-left:14px solid #111;border-top:9px solid transparent;border-bottom:9px solid transparent}
+.skip .bar{position:absolute;left:8px;right:8px;bottom:3px;height:4px;background:#ccc;border-radius:3px;overflow:hidden}
+.skip .bar i{display:block;height:100%;width:0;background:#e31b1b;transition:width .3s}
+.legit{left:80%;top:10%;font-weight:800;font-size:13px;text-align:center}
+.legit u{color:#e31b1b}
+.meter{width:46%;height:14px;border:3px solid #111;border-radius:9px;overflow:hidden;background:#fff}
+.meter i{display:block;height:100%;width:0;background:#e31b1b}
+.inrow{display:flex;gap:6px;width:min(78%,300px)}
+.inrow input{flex:1;min-width:0;border:3px solid #111;border-radius:10px;padding:9px;font:inherit;font-weight:800;font-size:16px;-webkit-user-select:text;user-select:text}
+.inrow button{border:3px solid #111;border-radius:10px;background:#e31b1b;color:#fff;font-weight:900;padding:0 14px}
+.dlg{left:62%;top:50%;width:min(72%,280px);background:#fff;border:3px solid #111;border-radius:14px;box-shadow:4px 4px 0 #111;padding:12px;text-align:center;z-index:7}
+.dq{font-weight:900;font-size:17px;margin-bottom:10px}
+.drow{display:flex;gap:8px}.drow.rev{flex-direction:row-reverse}
+.drow button{flex:1;border:3px solid #111;border-radius:10px;background:#fff;font-weight:900;font-size:16px;padding:8px}
+.dlg small{display:block;margin-top:6px;font-weight:700;opacity:.5}
+.item{width:58px;height:58px;cursor:grab;touch-action:none}
+.kb{display:flex;flex-direction:column;gap:5px;align-items:center}
+.kb div{display:flex;gap:4px}
+.key{min-width:34px;height:36px;border:2px solid #111;border-radius:7px;background:#fafafa;font-weight:900;font-size:13px;box-shadow:0 3px 0 #111;padding:0 4px}
+.key.wide{min-width:64px}
+.key:active{box-shadow:none;transform:translateY(3px)}
+.counter,.digit,.clock,.word{font-weight:900;font-size:clamp(22px,7vw,34px);white-space:nowrap}
+.digit{font-size:56px;color:#e31b1b;-webkit-text-stroke:2px #111}
+.word.go{color:#1a9e3a}
+.upsell{background:#111;color:#fff;border:0;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;white-space:nowrap;opacity:.85}
+.upsell b{color:#ffd000}
+.slots{font-weight:900;font-size:30px;letter-spacing:2px;white-space:nowrap}
+.tile{width:46px;height:50px;border:3px solid #111;border-radius:10px;background:#fff;font-weight:900;font-size:24px;box-shadow:0 4px 0 #111}
+.tile:disabled{opacity:.25}
+.secret{color:#f6f6f6;font-weight:700;font-size:13px;-webkit-user-select:text;user-select:text;cursor:text;white-space:nowrap;padding:6px}
+.secret::selection{background:#111;color:#fff}
+.opt{border:3px solid #111;border-radius:12px;background:#fff;font-weight:900;font-size:17px;padding:10px 14px;box-shadow:3px 3px 0 #111;white-space:nowrap}
+.palette{display:flex;gap:10px}
+.sw{width:42px;height:42px;border-radius:50%;border:3px solid #111;background:#e31b1b;filter:hue-rotate(var(--h));padding:0}
+.prog{font-weight:900;font-size:16px;white-space:nowrap;letter-spacing:2px}
+.pad{z-index:7;display:flex;gap:18px;align-items:center}
+.dp{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:3px}
+.dp button,.ab button{border:3px solid #111;border-radius:10px;background:#fff;font-weight:900;font-size:20px;box-shadow:0 3px 0 #111}
+.dp [data-k=U]{grid-area:1/2}.dp [data-k=L]{grid-area:2/1}.dp [data-k=R]{grid-area:2/3}.dp [data-k=D]{grid-area:3/2}
+.ab{display:flex;gap:8px}.ab button{width:48px;height:48px;border-radius:50%;background:#e31b1b;color:#fff}
+.err{width:min(66%,270px);background:#1d3fbf;color:#fff;border:3px solid #111;border-radius:12px;padding:14px;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace}
+.e1{font-weight:900;letter-spacing:4px}.e404{font-size:64px;font-weight:900;line-height:1}
+.e404 .z{cursor:pointer}.e2{font-weight:700}
+.lnk{margin-top:10px;background:none;border:0;color:#bcd0ff;text-decoration:underline;font-family:inherit}
+.note{left:62%;top:58%;width:clamp(180px,52vw,256px);aspect-ratio:1/.9;background:#ffe866;border:2px solid #c9b000;box-shadow:4px 6px 10px rgba(0,0,0,.25);font-weight:900;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;rotate:-3deg;cursor:grab;z-index:4;touch-action:none}
+.note small{font-size:12px;font-weight:700}
+.cablewrap{position:absolute;inset:0;pointer-events:none;z-index:1}
+.socket{width:40px;height:56px;background:#eee;border:3px solid #111;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.socket i,.plug i{display:block;width:12px;height:5px;background:#111;border-radius:2px}
+.plug{width:34px;height:44px;background:#333;border:3px solid #111;border-radius:6px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:10px;cursor:grab;z-index:4;touch-action:none}
+.plug i{background:#c9c9c9;margin-right:-14px}
+.rot{position:absolute;inset:0;transition:transform .12s}
+.knob{display:flex;flex-direction:column;align-items:center;width:min(60%,240px);font-weight:800;font-size:12px}
+.knob input{width:100%;accent-color:#e31b1b}
+.star{width:40px;height:40px;border:0;background:none;padding:0}
+.cmd{font-weight:900;font-size:clamp(17px,5vw,22px);text-align:center;width:90%;left:55%}
+.cmd.in{animation:pop .3s}
+.pad2{width:100px;height:70px;border:3px solid #111;border-radius:14px;background:#fff;font-weight:900;font-size:18px;box-shadow:0 5px 0 #111}
+.pad2:active{box-shadow:0 1px 0 #111;margin-top:4px}
+.tag{background:#e31b1b;border:3px solid #111;border-radius:10px;color:#fff;text-align:center;padding:4px 8px;rotate:8deg;display:flex;flex-direction:column;line-height:1.1}
+.tag i{background:#fff;color:#111;font-style:normal;font-weight:900;font-size:17px;border-radius:4px;padding:2px 6px;margin-top:2px;font-family:"Comic Sans MS",cursive}
+.tag small{font-size:9px}
+.lbar{width:70%;height:30px;border:3px solid #111;border-radius:16px;overflow:hidden;background:#fff}
+.lbar i{display:block;height:100%;width:99%;background:repeating-linear-gradient(45deg,#e31b1b 0 12px,#ff4d4d 12px 24px)}
+.lbar b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-text-stroke:.6px #111;font-size:16px}
+.lknob{width:28px;height:42px;border:3px solid #111;border-radius:9px;background:#fff;box-shadow:2px 2px 0 #111;cursor:grab;z-index:4;touch-action:none}
+.captcha{z-index:7;width:min(64%,232px);background:#fff;border:2px solid #bbb;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.2);padding:6px}
+.captcha .ch{background:#4a90e2;color:#fff;font-weight:700;font-size:13px;padding:8px;border-radius:3px;text-align:left}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:5px 0}
+.cc{aspect-ratio:1;border:0;background:#f1f1f1;padding:6px;position:relative}
+.cc svg{width:100%;height:100%}
+.cc.on{outline:4px solid #4a90e2;outline-offset:-4px;background:#dbe9fb}
+.verify{width:100%;background:#4a90e2;color:#fff;border:0;border-radius:3px;font-weight:900;padding:8px}
+.hp{width:70%;height:24px;border:3px solid #111;border-radius:12px;overflow:hidden;background:#fff}
+.hp i{display:block;height:100%;width:100%;background:#e31b1b;transition:width .2s}
+.hp b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.dark{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle 80px at var(--x) var(--y),transparent 0,transparent 55px,#000 82px)}
+.dark.lit{opacity:0;transition:opacity .5s}
+.scroller{position:absolute;left:28%;right:0;top:0;bottom:0;overflow-y:auto;touch-action:pan-y;z-index:3;text-align:center;-webkit-overflow-scrolling:touch}
+.scroller .sp{height:380px}
+.scroller .sign{font-weight:900;font-size:20px;padding:8px}
+.scroller .sign.small{font-size:12px;opacity:.6}
+.scroller .mini{position:relative;transform:none;left:auto;top:auto;display:inline-block;margin:10px}
+@media (min-height:820px){.wrap{min-height:380px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hud">
+    <button class="chip" id="menuBtn">Levels</button>
+    <span class="chip" id="lvChip">Lv 1/50</span>
+    <span class="sp"></span>
+    <span class="chip" id="deathChip"><b>0</b> fails</span>
+    <button class="chip" id="timerBtn" aria-label="Play time">00:00</button>
+    <button class="chip icon" id="muteBtn" aria-label="Sound"></button>
+  </div>
+  <h1 class="title" id="title"></h1>
+  <div class="rule"><span></span><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#e31b1b" stroke-width="3"/><path d="M6 6l12 12" stroke="#e31b1b" stroke-width="3"/></svg><span></span></div>
+  <div class="card" id="lvcard"><span id="lvtext"></span></div>
+  <div id="hintbox" hidden></div>
+  <div class="wrap" id="wrap">
+    <div id="stage"></div>
+    <div class="narr" id="narr"><svg viewBox="0 0 100 160" width="100%" height="100%">
+      <g fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 72 L28 98"/><path d="M50 70 L74 58 L70 30"/><path d="M50 60 V108"/><path d="M50 108 L34 150 M50 108 L66 150"/>
+        <circle cx="50" cy="36" r="23" fill="#fff"/>
+        <g class="eyes" fill="#111" stroke="none"><ellipse cx="42" cy="34" rx="3.2" ry="4.5"/><ellipse cx="58" cy="34" rx="3.2" ry="4.5"/></g>
+        <g class="shut" stroke-width="3"><path d="M37 35 h9 M53 35 h9"/></g>
+        <path class="brow" stroke-width="3" d="M35 27 l9 -4 M65 27 l-9 -4"/>
+        <path stroke-width="3.5" d="M42 50 q8 -8 16 0"/>
+      </g>
+      <path class="sw s1" fill="#39a0ff" d="M82 14 q5 7 0 10 q-5 -3 0 -10z"/>
+      <path class="sw s2" fill="#39a0ff" d="M20 22 q4 6 0 8 q-4 -2 0 -8z"/>
+      <text class="zzz" x="72" y="10" font-size="16" font-weight="900" fill="#111">z Z</text>
+    </svg></div>
+    <div class="bubble" id="bubble"></div>
+  </div>
+  <div class="controls">
+    <button id="hintBtn">Hint <small>(ad)</small></button>
+    <button id="skipBtn">Skip <small>(ad)</small></button>
+    <button id="shareBtn" class="share">Share</button>
+  </div>
+</div>
+<div class="ov" id="modal" hidden><div class="box" id="modalBox"></div></div>
+<div class="ov" id="adOv" hidden><div class="box" id="adBox"></div></div>
+<div class="ov" id="menuOv" hidden><div class="box"><div class="mh" style="font-size:28px">Levels</div><div id="menuStats" style="font-weight:700;font-size:13px"></div><div class="grid" id="grid"></div><div class="row"><button id="resetBtn">Reset progress</button><button id="menuClose" class="share">Close</button></div></div></div>
+<div class="ov end" id="endOv" hidden></div>
+<div id="toast"></div>
+<script>
+'use strict';
+// Share URL (set to the live production alias)
+const SHARE_URL='https://dont-press-the-button.vercel.app';
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),narr=$('#narr'),bubble=$('#bubble');
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const fmt=s=>{s=Math.floor(s);const h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60,p=n=>String(n).padStart(2,'0');return h?`${h}:${p(m)}:${p(x)}`:`${p(m)}:${p(x)}`};
+const T={fastAds:false};
+// ---------- save ----------
+const SK='dptb-save-v1';
+const DEF=()=>({unlocked:1,cur:0,deaths:0,time:0,done:{},muted:false,finished:false});
+let S=(()=>{try{return Object.assign(DEF(),JSON.parse(localStorage.getItem(SK)||'{}'))}catch(e){return DEF()}})();
+const persist=()=>{try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}};
+// ---------- audio (WebAudio, no assets) ----------
+let AC=null,master=null;
+function ac(){try{if(!AC){const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;AC=new A();master=AC.createGain();master.gain.value=S.muted?0:.5;master.connect(AC.destination)}if(AC.state==='suspended')AC.resume()}catch(e){return null}return AC}
+function tone(f,d=.15,type='square',v=.25,w=0,f2){const a=AC;if(!a||S.muted)return;try{const t=a.currentTime+w,o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02)}catch(e){}}
+function noise(d=.4,v=.4){const a=AC;if(!a||S.muted)return;try{const b=a.createBuffer(1,Math.floor(a.sampleRate*d),a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=(Math.random()*2-1)*(1-i/ch.length);const s=a.createBufferSource(),g=a.createGain();g.gain.value=v;s.buffer=b;s.connect(g);g.connect(master);s.start()}catch(e){}}
+const sfx={press(){tone(180,.12,'sine',.5,0,70);tone(90,.08,'triangle',.3)},click(){tone(900,.04,'square',.1)},
+fail(){tone(330,.16,'sawtooth',.2);tone(250,.18,'sawtooth',.2,.15);tone(150,.45,'sawtooth',.2,.3,90)},
+win(){[523,659,784,1047].forEach((f,i)=>tone(f,.16,'square',.15,i*.08))},alarm(){tone(988,.12,'square',.18);tone(740,.12,'square',.18,.14)},
+boom(){noise(.7,.6);tone(80,.5,'sine',.5,0,30)},pop(){tone(500,.09,'sine',.3,0,1300)},
+fanfare(){[523,523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,.18,'square',.14,i*.12))}};
+document.addEventListener('pointerdown',ac,true);document.addEventListener('keydown',ac,true);
+// ---------- icons ----------
+const ICON={
+donut:'<svg viewBox="0 0 60 60" width="100%" height="100%"><circle cx="30" cy="31" r="25" fill="#e7a95b" stroke="#111" stroke-width="3"/><path d="M7 28 A23 21 0 0 1 53 28 Q50 38 44 32 Q38 40 32 33 Q25 40 19 33 Q12 39 7 28z" fill="#ff7ab6" stroke="#111" stroke-width="2.5"/><circle cx="30" cy="30" r="8" fill="#fff" stroke="#111" stroke-width="3"/><path d="M18 18l4 2M38 15l3 3M44 24l-3 2M24 12l-1 3" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/></svg>',
+rock:'<svg viewBox="0 0 60 60" width="100%" height="100%"><path d="M8 42 Q5 24 20 16 Q34 6 47 18 Q57 29 51 43 Q41 53 23 51 Q11 49 8 42z" fill="#9a9a9a" stroke="#111" stroke-width="3"/><path d="M20 30q5-4 10 0M34 38q4-3 8 0" stroke="#666" stroke-width="2.5" fill="none"/></svg>',
+sock:'<svg viewBox="0 0 60 60" width="100%" height="100%"><path d="M22 4 H42 V34 Q42 52 26 54 Q10 55 10 45 Q10 38 22 36z" fill="#fff" stroke="#111" stroke-width="3"/><path d="M22 10 H42 M22 17 H42" stroke="#e31b1b" stroke-width="4"/><path d="M14 48q-6 2 2 4" stroke="#7a6" stroke-width="2" fill="none"/></svg>',
+star:'<svg viewBox="0 0 40 40" width="100%" height="100%"><path d="M20 3 L25 15 L38 15 L27 23 L31 36 L20 28 L9 36 L13 23 L2 15 L15 15z" fill="#ffd000" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+btn:'<svg viewBox="0 0 40 40"><ellipse cx="20" cy="26" rx="15" ry="7" fill="#900" stroke="#111" stroke-width="2"/><rect x="5" y="20" width="30" height="6" fill="#900"/><ellipse cx="20" cy="20" rx="15" ry="7" fill="#e22" stroke="#111" stroke-width="2"/></svg>',
+sun:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="8" fill="#ffd000" stroke="#111" stroke-width="2"/><path d="M20 4v5M20 31v5M4 20h5M31 20h5M9 9l3 3M28 28l3 3M31 9l-3 3M9 31l3-3" stroke="#111" stroke-width="2"/></svg>',
+shirt:'<svg viewBox="0 0 40 40"><path d="M13 6 L4 12 L8 18 L12 16 V36 H28 V16 L32 18 L36 12 L27 6 Q20 11 13 6z" fill="#7ab8ff" stroke="#111" stroke-width="2"/><circle cx="20" cy="17" r="1.8"/><circle cx="20" cy="23" r="1.8"/><circle cx="20" cy="29" r="1.8"/></svg>',
+cloud:'<svg viewBox="0 0 40 40"><path d="M10 28 Q3 28 4 22 Q5 16 12 17 Q14 9 22 10 Q30 11 30 18 Q37 18 36 24 Q35 28 30 28z" fill="#fff" stroke="#111" stroke-width="2"/></svg>',
+tree:'<svg viewBox="0 0 40 40"><path d="M20 4 L32 26 H8z" fill="#3cb44b" stroke="#111" stroke-width="2"/><rect x="17" y="26" width="6" height="9" fill="#8b5a2b" stroke="#111" stroke-width="2"/></svg>',
+house:'<svg viewBox="0 0 40 40"><path d="M6 19 L20 7 L34 19" fill="#e31b1b" stroke="#111" stroke-width="2"/><rect x="10" y="18" width="20" height="16" fill="#ffe0a0" stroke="#111" stroke-width="2"/><rect x="17" y="24" width="6" height="10" fill="#8b5a2b"/></svg>',
+car:'<svg viewBox="0 0 40 40"><path d="M5 26 V20 L11 13 H27 L34 20 V26z" fill="#ffd000" stroke="#111" stroke-width="2"/><circle cx="12" cy="27" r="4" fill="#333" stroke="#111" stroke-width="2"/><circle cx="28" cy="27" r="4" fill="#333" stroke="#111" stroke-width="2"/></svg>'};
+const confettiHTML=()=>{let h='<div class="confetti">';const cs=['#e31b1b','#ffd000','#3aa0ff','#3cb44b','#111'];for(let i=0;i<46;i++)h+=`<i style="left:${Math.random()*100}%;background:${rnd(cs)};animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*4}s"></i>`;return h+'</div>'};
+// ---------- UI helpers ----------
+function say(t){bubble.innerHTML=t||'';bubble.hidden=!t;bubble.classList.remove('pop');void bubble.offsetWidth;bubble.classList.add('pop')}
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2300)}
+(function(){const parts=[["Don't Press",'tr'],['the','tthe'],['Button','tb']];let i=0,h='';parts.forEach(([s,cl],pi)=>{if(pi)h+=' ';h+=`<span class="${cl}">`;for(const ch of s){const id=i++;if(ch===' '){h+=' ';continue}let d=id;if(ch==='o'&&cl==='tr')d='o1';if(ch==='o'&&cl==='tb')d='o2';h+=`<span class="ch" data-id="${d}">${ch==="'"?'&rsquo;':ch}</span>`}h+='</span>'});$('#title').innerHTML=h})();
+// ---------- engine ----------
+const G={li:0,c:null,lastWon:-1};const attempts={};let vnow=0;
+const GENERIC=["You pressed it. Of course you did.","Bold strategy. Didn't work.","The button thanks you. I don't.","Wow. Just... wow.","That's not it, chief.","My grandma solves this faster. She's a cat."];
+const isPaused=()=>!$('#modal').hidden||!$('#adOv').hidden||!$('#menuOv').hidden||!$('#endOv').hidden;
+function fire(n,...a){const c=G.c;if(!c||c.done||!c.hooks[n])return false;c.hooks[n](...a);return true}
+function makeBtn(){const b=document.createElement('button');b.className='bigbtn';b.setAttribute('aria-label','The button');b.innerHTML='<span class="base"></span><span class="side"></span><span class="top"><span class="lbl"></span></span>';b.addEventListener('contextmenu',e=>e.preventDefault());return b}
+function ctx(i){
+  const c={i,s:{},timers:[],offs:[],hooks:{},done:false,t0:vnow,attempts:attempts[i]||0,stage,narr};
+  c.btn=makeBtn();stage.appendChild(c.btn);
+  c.on=(t,e,f,o)=>{t.addEventListener(e,f,o);c.offs.push(()=>t.removeEventListener(e,f,o))};
+  c.after=(ms,fn)=>{const t={at:vnow+ms,fn};c.timers.push(t);return t};
+  c.every=(ms,fn)=>{const t={at:vnow+ms,fn,ev:ms};c.timers.push(t);return t};
+  c.cancel=t=>{if(t)t.dead=true};
+  c.hook=(n,f)=>{c.hooks[n]=f};
+  c.say=say;
+  c.win=m=>{if(c.done||G.c!==c)return;c.done=true;won(c,m)};
+  c.fail=m=>{if(c.done||G.c!==c)return;c.done=true;failed(c,m)};
+  c.onPress=f=>{c.bound=true;c.on(c.btn,'click',e=>{if(c.done)return;sfx.press();c.btn.classList.add('down');setTimeout(()=>c.btn.classList.remove('down'),120);f(e)})};
+  c.press=()=>c.btn.click();
+  c.label=t=>{c.btn.querySelector('.lbl').innerHTML=t};
+  c.pos=(el,x,y)=>{el.style.left=typeof x==='number'?x+'%':x;el.style.top=typeof y==='number'?y+'%':y};
+  c.scale=s=>c.btn.style.setProperty('--s',s);
+  c.hide=()=>{c.btn.style.display='none'};
+  c.el=(tag,cls,html,parent)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||stage).appendChild(e);return e};
+  c.W=()=>stage.clientWidth;c.H=()=>stage.clientHeight;
+  c.local=e=>{const r=stage.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+  c.drag=(el,o={})=>{let st=null;el.style.touchAction='none';
+    const api={start(x,y){st={x,y,ex:el.offsetLeft,ey:el.offsetTop,m:0};el.classList.add('dragging');o.start&&o.start()},
+      move(x,y){if(!st)return;const nx=st.ex+x-st.x,ny=st.ey+y-st.y;st.m=Math.max(st.m,Math.hypot(x-st.x,y-st.y));st.nx=nx;st.ny=ny;el.style.left=nx+'px';el.style.top=ny+'px';o.move&&o.move(nx,ny,st)},
+      end(){if(!st)return;const s=st;st=null;if(!c.done&&o.end)o.end(s.nx??s.ex,s.ny??s.ey,s.m,s);el.classList.remove('dragging')}};
+    c.on(el,'pointerdown',e=>{if(c.done)return;e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(_){}api.start(...c.local(e))});
+    c.on(el,'pointermove',e=>{if(st)api.move(...c.local(e))});
+    c.on(el,'pointerup',()=>api.end());c.on(el,'pointercancel',()=>api.end());
+    el.__drag=api;return api};
+  c.dragTo=(el,dx,dy)=>{const a=el.__drag,x=el.offsetLeft,y=el.offsetTop;a.start(x,y);for(let k=1;k<=6;k++)a.move(x+dx*k/6,y+dy*k/6);a.end()};
+  c.input=(ph,cb)=>{const w=c.el('div','inrow');w.innerHTML=`<input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="24" placeholder="${ph}"><button>OK</button>`;const inp=w.querySelector('input');const go=()=>{if(c.done)return;const v=inp.value.trim();if(!v)return;sfx.click();cb(v)};c.on(inp,'keydown',e=>{if(e.key==='Enter')go()});c.on(w.querySelector('button'),'click',go);c.s.inp=inp;c.s.submit=go;return w};
+  c.clickTitle=id=>document.querySelector(`#title [data-id="${id}"]`).click();
+  c.clickText=k=>document.querySelector(`#lvtext [data-k="${k}"]`).click();
+  c.clickNarr=()=>narr.click();
+  c.advance=advance;
+  return c}
+function tick(dt){vnow+=dt;const c=G.c;if(!c||c.done)return;for(const tm of c.timers.slice()){let g=0;while(!tm.dead&&tm.at<=vnow&&!c.done&&G.c===c&&g++<200){if(tm.ev)tm.at+=tm.ev;else tm.dead=true;tm.fn()}}c.timers=c.timers.filter(t=>!t.dead)}
+function advance(ms){while(ms>0){const d=Math.min(16,ms);tick(d);ms-=d}}
+function cleanup(){const c=G.c;if(!c)return;c.done=true;c.offs.forEach(f=>{try{f()}catch(e){}});c.timers=[];G.c=null}
+function closeAll(){$('#modal').hidden=true;$('#menuOv').hidden=true;$('#endOv').hidden=true}
+function startLevel(i){i=Math.max(0,Math.min(N-1,i|0));cleanup();closeAll();G.li=i;S.cur=i;persist();
+  stage.innerHTML='';stage.className='';stage.removeAttribute('style');narr.className='narr';narr.removeAttribute('style');
+  const hb=$('#hintbox');hb.hidden=true;hb.innerHTML='';
+  const L=LEVELS[i];$('#lvtext').innerHTML=`Level ${i+1}: ${L.t}`;hud();
+  const c=ctx(i);G.c=c;say(L.s||'');L.setup(c);if(!c.bound)c.onPress(()=>c.fail(rnd(GENERIC)));
+  const card=$('#lvcard');card.classList.remove('in');void card.offsetWidth;card.classList.add('in')}
+function modal(h){$('#modalBox').innerHTML=h;$('#modal').hidden=false}
+function won(c,m){sfx.win();S.done[c.i]=1;S.unlocked=Math.max(S.unlocked,Math.min(N,c.i+2));attempts[c.i]=0;G.lastWon=c.i;const last=c.i===N-1;if(last)S.finished=true;persist();hud();
+  modal(`<div class="mh win">${rnd(['NAILED IT','NICE!','GENIUS?','OKAY WOW','YOU DID IT'])}</div><p>${m||'Huh. It worked.'}</p><button class="big" id="nextBtn">${last?'See the ending':'Next level'} &rarr;</button>`);
+  $('#nextBtn').onclick=()=>goNext(c.i)}
+function goNext(i,noBreak){closeAll();if(i>=N-1)return showEnding();if(!noBreak&&(i+1)%10===0)showAd(()=>startLevel(i+1),'break');else startLevel(i+1)}
+function failed(c,m){sfx.fail();S.deaths++;attempts[c.i]=(attempts[c.i]||0)+1;persist();hud();const d=$('#deathChip');d.classList.remove('bump');void d.offsetWidth;d.classList.add('bump');
+  narr.classList.remove('jump','sleepy','asleep');narr.classList.add('panic');
+  modal(`<div class="mh fail">${rnd(['FAIL','NOPE','WRONG','OOF','HA!'])}</div><p>${m||rnd(GENERIC)}</p><button class="big" id="retryBtn">Try again</button><div class="row"><button id="mSkip">Skip level (ad)</button><button id="mShare">Ask a friend</button></div>`);
+  $('#retryBtn').onclick=()=>startLevel(c.i);$('#mSkip').onclick=skipLevel;$('#mShare').onclick=share}
+function hud(){$('#lvChip').textContent=`Lv ${G.li+1}/${N}`;$('#deathChip').innerHTML=`<b>${S.deaths}</b> fails`;$('#timerBtn').textContent=fmt(S.time);
+  $('#muteBtn').innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3z" fill="#111"/>${S.muted?'<path d="M16 9l5 6M21 9l-5 6" stroke="#e31b1b" stroke-width="2.5"/>':'<path d="M16 8q3 4 0 8M18.5 5.5q5 6.5 0 13" stroke="#111" stroke-width="2" fill="none"/>'}</svg>`}
+// ---------- ads (STUBS) ----------
+// Replace showAd with a portal SDK when publishing, e.g. CrazyGames:
+//   window.CrazyGames.SDK.ad.requestAd(kind==='break'?'midgame':'rewarded',{adFinished:onDone,adError:onDone})
+// or Poki: PokiSDK.rewardedBreak().then(onDone) / PokiSDK.commercialBreak().then(onDone)
+function showAd(onDone,kind='rewarded'){const ov=$('#adOv'),box=$('#adBox');ov.hidden=false;let n=T.fastAds?0:3;
+  const render=()=>{box.innerHTML=`<div class="adtag">AD</div><div class="mh" style="font-size:26px;color:#e31b1b">${kind==='break'?'Quick ad break':'Watching an ad...'}</div><p>Your ad here. Real ads plug in once the game is on CrazyGames or Poki.</p>`+(n>0?`<div class="adcount">${kind==='break'?'Back to the pain':'Reward'} in ${n}...</div>`:`<button class="big" id="adClose">${kind==='break'?'Continue':'Claim reward'} &rarr;</button>`);
+    if(n<=0)$('#adClose').onclick=()=>{ov.hidden=true;onDone&&onDone()}};
+  render();if(n>0){const iv=setInterval(()=>{n--;render();if(n<=0)clearInterval(iv)},1000)}}
+function skipLevel(){const i=G.li;showAd(()=>{if(!S.done[i])S.done[i]=2;S.unlocked=Math.max(S.unlocked,Math.min(N,i+2));G.lastWon=i;persist();toast("Level skipped. We won't tell.");goNext(i,true)},'rewarded')}
+// ---------- share ----------
+function fallbackCopy(t){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove()}
+function copy(t){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t));fallbackCopy(t);return Promise.resolve()}
+function share(){const fin=!$('#endOv').hidden;const txt=fin?`I beat all ${N} levels of Don't Press the Button with ${S.deaths} fails. Bet you can't beat it ${SHARE_URL}`:`I got stuck on level ${G.li+1} of Don't Press the Button. Bet you can't beat it ${SHARE_URL}`;window.__lastShare=txt;copy(txt).then(()=>toast('Copied! Paste it to a friend.'))}
+// ---------- menu & ending ----------
+function openMenu(){const g=$('#grid');g.innerHTML='';for(let i=0;i<N;i++){const b=document.createElement('button');const lock=i>=S.unlocked;b.className='cell'+(S.done[i]?' done':'')+(i===G.li?' cur':'')+(lock?' lock':'');b.textContent=lock?'?':i+1;b.disabled=lock;b.dataset.lv=i;b.onclick=()=>startLevel(i);g.appendChild(b)}
+  $('#menuStats').textContent=`${Object.keys(S.done).length}/${N} beaten · ${S.deaths} fails · ${fmt(S.time)}`;$('#resetBtn').textContent='Reset progress';$('#menuOv').hidden=false}
+function showEnding(){cleanup();closeAll();S.finished=true;persist();sfx.fanfare();const e=$('#endOv');
+  e.innerHTML=confettiHTML()+`<div class="box"><div class="mh win">YOU ACTUALLY BEAT IT.</div><p>For real this time. No tricks. (Probably.) The button respects you now.</p><div class="stats"><div><b>${N}</b>levels</div><div><b>${S.deaths}</b>fails</div><div><b>${fmt(S.time)}</b>time</div></div><button class="big share" id="endShare">Brag about it</button><div class="row"><button id="endLv">Level select</button><button id="endRe">Play again</button></div><small class="credits">Don't Press the Button · thanks for playing!</small></div>`;
+  e.hidden=false;$('#endShare').onclick=share;$('#endLv').onclick=()=>{e.hidden=true;openMenu()};$('#endRe').onclick=()=>startLevel(0)}
+// ---------- levels ----------
+const LEVELS=[
+{t:`<span class=r>Don't</span> press the button.`,s:`Simple. Even you can do this.`,hint:`Do absolutely nothing for 5 seconds. Hands off.`,
+ setup(c){c.onPress(()=>c.fail(`You lasted ${((vnow-c.t0)/1000).toFixed(1)} seconds. Legendary. Not.`));c.after(1700,()=>c.say('Good... goooood...'));c.after(3400,()=>c.say(`Almost there. Don't blow it.`));c.after(5000,()=>c.win('You did nothing. I have never been prouder.'))},
+ solve(c){c.advance(5100)}},
+{t:`Okay. <span class=r>NOW</span> press the button.`,s:`Go on. I won't judge.`,hint:`It's exactly what it says. For once.`,
+ setup(c){c.onPress(()=>c.win('See? Pressing is fun. Enjoy it while it lasts.'))},solve(c){c.press()}},
+{t:`Press the <span data-k="b">button</span>.`,s:`That big red thing? Pfft. Amateur hour.`,hint:`Read the instructions. Like, physically. Tap them.`,
+ setup(c){c.onPress(()=>c.fail(`That's a decoy. Read the instructions. Literally.`));c.hook('text',k=>{if(k==='b'){sfx.press();c.win('You pressed the WORD "button". Galaxy brain.')}})},
+ solve(c){c.clickText('b')}},
+{t:`Uh oh. Someone stole the button.`,s:`It was right here a second ago...`,hint:`Look up at the title. One letter is suspiciously round and red.`,
+ setup(c){c.hide();const o=document.querySelector('#title [data-id="o1"]');o.classList.add('sus');c.offs.push(()=>o.classList.remove('sus'));
+  c.after(5000,()=>c.say('Round... red... somewhere up there...'));
+  c.hook('title',id=>{if(id==='o1'){sfx.press();c.win(`Found it! The "o" in the title was a button all along.`)}else c.say(`Nope, that's just a letter.`)});
+  c.on(stage,'click',()=>c.say(`Nothing down here. I looked everywhere.`))},
+ solve(c){c.clickTitle('o1')}},
+{t:`Press it exactly <span class=r>7</span> times.`,s:`I'll count for you. I'm great at counting.`,hint:`Press 7 times, then stop. Ignore the narrator, he can't count past 5.`,
+ setup(c){let n=0,t=null;c.onPress(()=>{n++;c.cancel(t);if(n>7)return c.fail(`${n}?! I said SEVEN.`);c.say(n<5?n+'...':n===5?'5... or was that 6? I lost count.':'uhhh...');t=c.after(1500,()=>n===7?c.win('Exactly 7! You can count! Without my help!'):c.fail(`That was ${n}. Seven is bigger than ${n}. Look it up.`))})},
+ solve(c){for(let i=0;i<7;i++)c.press();c.advance(1600)}},
+{t:`The button is shy. Be gentle.`,s:`It's not running away. It's... jogging. From you.`,hint:`Things that run leave something behind. Look where it was.`,
+ setup(c){const sh=c.el('div','shadow');c.pos(sh,'62%','calc(48% + 42px)');c.pos(c.btn,62,48);c.btn.classList.add('noshadow');c.s.shadow=sh;let k=0;
+  const flee=()=>{if(c.done)return;k++;sfx.pop();c.pos(c.btn,36+Math.random()*54,13+Math.random()*26);if(k===3)c.say('See? Shy. Leave it alone.');if(k===6)c.say(`It left its shadow behind. Rude.`)};
+  c.on(c.btn,'pointerenter',e=>{if(e.pointerType==='mouse')flee()});c.on(c.btn,'pointerdown',e=>{e.preventDefault();flee()});
+  c.onPress(()=>flee());c.on(sh,'click',()=>{sfx.press();c.win(`You stepped on its shadow. Now it can't move. Monster.`)})},
+ solve(c){c.s.shadow.click()}},
+{t:`Get this button <span class=r>OFF</span> my screen.`,s:`I can't look at it anymore. It judges me.`,hint:`Drag it. All the way off the edge.`,
+ setup(c){stage.style.touchAction='none';let lastDrag=-1e9;
+  c.drag(c.btn,{end:(x,y,m)=>{if(m<8)return;lastDrag=performance.now();const W=c.W(),H=c.H();if(x<-10||x>W+10||y<-10||y>H+10){sfx.pop();c.win('Yeet! Gone forever. Thank you.')}else c.say('Further! All the way OFF.')}});
+  c.onPress(()=>{if(performance.now()-lastDrag<400)return;c.fail(`I said get it OFF the screen. Not press it.`)})},
+ solve(c){c.dragTo(c.btn,-c.W(),0)}},
+{t:`A quick word from our sponsor...`,s:`Ugh, ads. Just wait it out, I guess?`,hint:`That "Skip ad" button is totally real. 100% legit. Trust it.`,
+ setup(c){const ad=c.el('div','fakead',`<div class="spons">Sponsored</div><button class="adx" aria-label="close">&times;</button><div class="adh">BUTTON PRO&trade;</div><div class="ads">Now 40% redder!<br>Press responsibly.</div><button class="skip"><span class="tri"></span><span><b>SKIP AD</b><br><small class="cnt">5 seconds</small></span><i class="bar"><i></i></i></button>`);
+  c.el('div','legit','Totally real.<br><u>100%</u> legit.');let n=5;const cnt=ad.querySelector('.cnt'),bar=ad.querySelector('.bar i');
+  c.every(1000,()=>{n--;if(n<=0){n=5;c.say('Wait... it reset?! These ads are evil.')}cnt.textContent=n+(n===1?' second':' seconds');bar.style.width=(100-n*20)+'%'});
+  c.s.skip=ad.querySelector('.skip');
+  c.on(ad.querySelector('.adx'),'click',e=>{e.stopPropagation();c.fail(`That X was part of the ad. You're now subscribed to Button Weekly.`)});
+  c.on(c.s.skip,'click',e=>{e.stopPropagation();sfx.press();c.win(`You skipped it! Nobody skips that fast. Respect.`)});
+  c.on(ad,'click',()=>c.fail(`You clicked the ad. Congrats on your new timeshare.`))},
+ solve(c){c.s.skip.click()}},
+{t:`Hold the button for 3 seconds. <span class=r>Don't</span> let go.`,s:`Easy. Like a hug. A long, awkward hug.`,hint:`Press and hold for 3 full seconds.`,
+ setup(c){const m=c.el('div','meter','<i></i>');c.pos(m,62,90);const fill=m.firstChild;let h=null,t0=0;
+  c.on(c.btn,'pointerdown',e=>{if(c.done||h)return;e.preventDefault();try{c.btn.setPointerCapture(e.pointerId)}catch(_){}sfx.press();c.btn.classList.add('down');t0=vnow;c.say('Hold it...');
+   c.every(50,()=>{const p=Math.min(1,(vnow-t0)/3000);fill.style.width=p*100+'%';if(p>.6)c.say('HOLD IT!')});
+   h=c.after(3000,()=>c.win('Three whole seconds. Strong finger. Respect.'))});
+  const rel=()=>{if(!h||c.done)return;c.fail(`You let go at ${((vnow-t0)/1000).toFixed(1)}s. Commitment issues, huh?`)};
+  c.on(c.btn,'pointerup',rel);c.on(c.btn,'pointercancel',rel);c.onPress(()=>{})},
+ solve(c){c.btn.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerId:1}));c.advance(3100)}},
+{t:`What's the magic word?`,s:`Pressing is RUDE. Ask nicely.`,hint:`What did your mom make you say before you got anything?`,
+ setup(c){c.pos(c.btn,62,64);c.scale(.8);const w=c.input('type it here...',v=>{if(/please|^(pls|plz|por favor|bitte|s.?il vous pla[iî]t)\b/i.test(v))c.win('Such manners! Your mom would be proud.');else c.fail(`"${esc(v)}"? Rude. Try again with manners.`)});c.pos(w,58,14);
+  c.onPress(()=>c.fail('No pressing until you ask nicely.'))},
+ solve(c){c.s.inp.value='please';c.s.submit()}},
+{t:`<span class=r>Don't</span> press it. No matter what he says.`,s:`Hey. Hey you. Pssst.`,hint:`Ignore the narrator completely. Wait about 9 seconds.`,
+ setup(c){c.label('PRESS ME :)');[[1300,'Press it. Just once. Nobody will know.'],[2800,'Please? Pretty please?'],[4300,`I'll give you $1,000,000. Real money.`],[5800,'I have a family! They are all buttons!'],[7300,'FINE. Ignore me. See if I care.']].forEach(([t,s])=>c.after(t,()=>{c.say(s);narr.classList.remove('panic');void narr.offsetWidth;narr.classList.add('panic')}));
+  c.after(8800,()=>c.win(`Iron will. He's crying now, but you won.`));c.onPress(()=>c.fail('You caved for fake money. Classic.'))},
+ solve(c){c.advance(8900)}},
+{t:`Press the button that <i>says</i> RED.`,s:`Colors. Words. What's the difference?`,hint:`Read the labels, ignore the colors.`,
+ setup(c){c.hide();[[0,'GREEN',`That one IS red. It SAYS green. Words matter.`],[120,'BLUE',`That says BLUE. And it's green. Are you okay?`],[240,'RED',null]].forEach(([h,l,m],k)=>{const b=c.el('button','mini',`<span>${l}</span>`);b.style.setProperty('--h',h+'deg');c.pos(b,34+k*25,30);c.on(b,'click',()=>{sfx.press();m?c.fail(m):c.win('Blue button that says RED. Your brain did a backflip.')});if(!m)c.s.ok=b})},
+ solve(c){c.s.ok.click()}},
+{t:`This level is broken. Turn it off and on again.`,s:`Classic IT advice. Works every time.`,hint:`Switch to another tab or app (or click outside the window), then come back.`,
+ setup(c){c.label('ERROR');c.btn.classList.add('grey');let away=false;c.hook('away',()=>{away=true});c.hook('back',()=>{if(away)c.win('Ahh, a fresh restart. Works every time. Thanks, IT.')});c.after(6000,()=>c.say(`Have you tried... leaving? And coming back?`));c.onPress(()=>c.fail('Pressing a broken thing harder never fixes it.'))},
+ solve(c){window.dispatchEvent(new Event('blur'));window.dispatchEvent(new Event('focus'))}},
+{t:`Press the button. Then confirm. Carefully.`,s:`Just a few quick questions. Standard procedure.`,hint:`Yes, Yes, No, Yes, No. Read them slowly.`,
+ setup(c){const steps=[['Are you sure?','yes'],['Are you NOT unsure?','yes'],['Would you like to quit?','no'],['Do you want to cancel not continuing?','yes'],['Click YES to not continue.','no']];let k=-1,dl=null;
+  const show=()=>{k++;if(k>=steps.length){dl.remove();return c.win('You survived the dialog maze. Lawyers fear you.')}if(!dl)dl=c.el('div','dlg');dl.innerHTML=`<div class="dq">${steps[k][0]}</div><div class="drow${k===3?' rev':''}"><button data-a="yes">Yes</button><button data-a="no">No</button></div><small>Question ${k+1} of ${steps.length}</small>`;
+   dl.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.done)return;sfx.click();b.dataset.a===steps[k][1]?show():c.fail(`"${steps[k][0]}" ...and you said ${b.dataset.a.toUpperCase()}. Reading comprehension: 0.`)})};
+  c.onPress(()=>{if(!dl)show()});c.s.answer=a=>stage.querySelector(`.dlg [data-a="${a}"]`).click();c.s.steps=steps},
+ solve(c){c.press();c.s.steps.forEach(s=>c.s.answer(s[1]))}},
+{t:`Press it twice as hard.`,s:`Put your back into it.`,hint:`"Twice as hard" means twice. Double-tap, fast.`,
+ setup(c){let n=0,t;c.onPress(()=>{n++;if(n===1)t=c.after(450,()=>c.fail('That was ONE press. Twice as hard = TWICE. Math.'));else{c.cancel(t);c.win('DOUBLE PRESS! Twice the hard!')}})},
+ solve(c){c.press();c.press()}},
+{t:`The button is stuck. Shake it loose!`,s:`Shake your phone! Or wiggle it. Or mash &larr; &rarr;.`,hint:`Shake your phone, drag the button left-right fast, or alternate the arrow keys.`,
+ setup(c){let n=0,last=0,lastKey='',dir=0,ox=0,asked=false;const home=[c.btn.offsetLeft,c.btn.offsetTop];
+  const bump=()=>{if(c.done)return;n++;sfx.click();c.btn.classList.remove('wig');void c.btn.offsetWidth;c.btn.classList.add('wig');if(n<8)c.say(['Harder!','It moved!','Keep going!','Almost loose!'][n%4]);else{sfx.pop();c.win(`It's loose! Also, you look ridiculous.`)}};
+  c.on(window,'devicemotion',e=>{const a=e.accelerationIncludingGravity||e.acceleration;if(!a)return;const m=Math.hypot(a.x||0,a.y||0,a.z||0);if(m>21&&vnow-last>160){last=vnow;bump()}});
+  c.on(stage,'pointerdown',()=>{if(!asked&&window.DeviceMotionEvent&&typeof DeviceMotionEvent.requestPermission==='function'){asked=true;DeviceMotionEvent.requestPermission().catch(()=>{})}});
+  c.hook('key',e=>{const k=e.key;let s=null;if(k==='ArrowLeft'||k==='a'||k==='A')s='L';if(k==='ArrowRight'||k==='d'||k==='D')s='R';if(s&&s!==lastKey){lastKey=s;bump()}});
+  stage.style.touchAction='none';
+  c.drag(c.btn,{start:()=>{ox=c.btn.offsetLeft;dir=0},move:nx=>{const d=nx-ox;if(Math.abs(d)>14){const s=Math.sign(d);if(s!==dir){dir=s;bump()}ox=nx}},end:()=>{c.btn.style.left=home[0]+'px';c.btn.style.top=home[1]+'px'}});
+  c.onPress(()=>c.say(`It's stuck! Shake it, don't poke it.`))},
+ solve(c){for(let i=0;i<8;i++)document.dispatchEvent(new KeyboardEvent('keydown',{key:i%2?'ArrowRight':'ArrowLeft',bubbles:true}))}},
+{t:`The button is hungry.`,s:`It hasn't eaten since level 1. Look at it.`,hint:`Drag the donut onto the button.`,
+ setup(c){c.label('FEED ME');c.pos(c.btn,62,68);stage.style.touchAction='none';
+  [['rock',`You fed it a ROCK?! It's a button, not a blender.`],['donut',null],['sock',`A sock. You fed it a used sock. Why.`]].forEach(([n,m],k)=>{const it=c.el('div','item',ICON[n]);c.pos(it,40+k*22,17);c.s[n]=it;let home;
+   c.drag(it,{start:()=>{home=home||[it.offsetLeft,it.offsetTop]},end:(x,y)=>{if(Math.hypot(x-c.btn.offsetLeft,y-c.btn.offsetTop)<85){it.remove();if(m)c.fail(m);else{sfx.pop();c.win('Nom nom. Food coma achieved. You win.')}}else{it.style.left=home[0]+'px';it.style.top=home[1]+'px'}}})});
+  c.onPress(()=>c.fail(`Ow! It bit you. It's HUNGRY, not lonely.`))},
+ solve(c){const d=c.s.donut;c.dragTo(d,c.btn.offsetLeft-d.offsetLeft,c.btn.offsetTop-d.offsetTop)}},
+{t:`Press the button. In the dark.`,s:`Who turned off the lights?! Use your cursor as a flashlight.`,hint:`Move your cursor (or drag your finger) around. It's small and hiding near an edge.`,
+ setup(c){const sp=[[88,18],[84,84],[44,12],[92,52]],p=sp[c.attempts%sp.length];c.pos(c.btn,p[0],p[1]);c.scale(.42);stage.style.touchAction='none';const d=c.el('div','dark');d.style.setProperty('--x','50%');d.style.setProperty('--y','45%');
+  const mv=e=>{const[x,y]=c.local(e);d.style.setProperty('--x',x+'px');d.style.setProperty('--y',y+'px')};c.on(stage,'pointermove',mv);c.on(stage,'pointerdown',mv);
+  c.onPress(()=>{d.classList.add('lit');c.win('Found it! Your eyes beat my electricity budget.')})},
+ solve(c){c.press()}},
+{t:`<span class=r>Don't</span> press the button.`,s:`Ah, this one again. You know the drill.`,hint:`This isn't level 1. Different level, different rules.`,
+ setup(c){c.after(3000,()=>c.say('...right? Same as level 1... right?'));c.after(6500,()=>c.fail('Gotcha. This time you were SUPPOSED to press it. Never trust a repeat.'));c.onPress(()=>c.win(`HA! You didn't trust me. Smart. Too smart.`))},
+ solve(c){c.press()}},
+{t:`Press any key to continue.`,s:`Any key. Literally any. How hard can it be?`,hint:`Look for the key labeled ANY.`,
+ setup(c){c.hide();const kb=c.el('div','kb');[['Q','W','E','R','T','Y'],['A','S','D','F','G','H'],['ESC','ANY','ENTER']].forEach(r=>{const row=document.createElement('div');r.forEach(k=>{const b=document.createElement('button');b.className='key'+(k.length>1?' wide':'');b.textContent=k;b.onclick=()=>{if(c.done)return;sfx.click();if(k==='ANY'){sfx.press();c.win('The ANY key! Finally, someone found it.')}else c.fail(`That's the "${k}" key. I said ANY key.`)};if(k==='ANY')c.s.any=b;row.appendChild(b)});kb.appendChild(row)});c.pos(kb,58,28);
+  c.hook('key',e=>{if(['Shift','Control','Alt','Meta','Tab','CapsLock'].includes(e.key))return;c.fail(`Not THAT key. "${esc(e.key)}" is not the ANY key.`)})},
+ solve(c){c.s.any.click()}},
+{t:`Press it 1,000,000 times.`,s:`Get comfy. This could take a while.`,hint:`Why do it yourself? There's an upgrade for that.`,
+ setup(c){let n=0;const ct=c.el('div','counter','0 / 1,000,000');c.pos(ct,62,18);const up=c.el('button','upsell','<b>BUTTON PRO</b> auto-press &times;1,000,000 <s>$99</s> <b>FREE</b>');c.pos(up,62,93);c.s.up=up;
+  const f=v=>v.toLocaleString('en-US')+' / 1,000,000';
+  c.onPress(()=>{n++;ct.textContent=f(n);if(n===8)c.say(`Only ${(1e6-n).toLocaleString('en-US')} to go!`);if(n===18)c.say('Your finger is filing a complaint.');if(n>=25)c.fail('Your finger quit. Unionized. Took the thumb with it.')});
+  c.on(up,'click',()=>{if(c.s.go||c.done)return;c.s.go=1;sfx.press();c.say('Ooh, premium!');let v=n;c.every(40,()=>{v=Math.min(1e6,Math.round(v*1.6+1234));ct.textContent=f(v);if(v>=1e6)c.win('Paid shortcut! (It was free.) Capitalism wins again.')})})},
+ solve(c){c.s.up.click();c.advance(1500)}},
+{t:`Spell what you must <span class=r>NEVER</span> do.`,s:`Five letters. Rhymes with "mess". Like your life choices.`,hint:`P - R - E - S - S.`,
+ setup(c){c.hide();const word='PRESS';let typed='';const sl=c.el('div','slots','_ _ _ _ _');c.pos(sl,60,40);
+  c.s.tiles=['S','E','R','S','P'].map((L,k)=>{const b=c.el('button','tile',L);c.pos(b,28+k*15,18);c.on(b,'click',()=>{if(b.disabled||c.done)return;sfx.click();if(L===word[typed.length]){typed+=L;b.disabled=true;sl.textContent=(typed+'_____'.slice(typed.length)).split('').join(' ');if(typed===word)c.win('P-R-E-S-S. You spelled it. Now never do it. (Until next level.)')}else c.fail(`"${typed+L}"? The spelling bee is crying.`)});return b})},
+ solve(c){for(const ch of 'PRESS')c.s.tiles.find(t=>!t.disabled&&t.textContent===ch).click()}},
+{t:`The button is out of reach.`,s:`If only someone tall and handsome could help... *ahem*`,hint:`Tap the stick figure. He's got hops.`,
+ setup(c){c.scale(.5);c.pos(c.btn,'46px','3%');c.onPress(()=>c.fail(`Your finger can't reach that high. Physics. Look it up.`));
+  c.hook('narr',()=>{narr.style.setProperty('--jy',-(c.H()-150)+'px');narr.classList.add('jump');c.say('HUP!');c.after(380,()=>{c.btn.classList.add('down');sfx.press();c.win('Head-butt! Ow. My skull. But we did it.')})})},
+ solve(c){c.clickNarr();c.advance(400)}},
+{t:`This level is so hard, you'll need a hint.`,s:`Seriously. Nobody has ever solved it. Ever.`,hint:`You already found it.`,
+ setup(c){c.onPress(()=>c.fail('Nope. Told you. Way too hard.'));c.hook('hint',()=>{sfx.press();c.win('You used a hint! That WAS the solution. Victory AND shame.')});c.after(5000,()=>c.say('Maybe ask for help? No shame. Okay, some shame.'))},
+ solve(c){document.getElementById('hintBtn').click()}},
+{t:`Nothing to see here. Move along.`,s:`Absolutely nothing. Stop looking.`,hint:`Some text is white on white. Select all (Ctrl+A) or scrub around with a long-press.`,
+ setup(c){c.label('NOTHING');const s=c.el('div','secret',`psst... tap me. I'm the real button.`);c.pos(s,64,92);c.s.sec=s;c.on(s,'click',()=>{sfx.press();c.win('Invisible ink! You sneaky little detective.')});c.onPress(()=>c.fail(`There's nothing to see here. Especially not that big red thing.`))},
+ solve(c){c.s.sec.click()}},
+{t:`Press it exactly at <span class=r>0</span>.`,s:`Countdown time! Ready?`,hint:`Zero is round. So is the "o" in the title's last word.`,
+ setup(c){const d=c.el('div','digit','5');c.pos(d,62,18);let i=0;const seq=[5,4,3,2,1];c.every(700,()=>{i=(i+1)%5;d.textContent=seq[i]});c.after(4200,()=>c.say('Wait... where did the zero go? It was round... I left it in a word up there.'));
+  c.onPress(()=>c.fail(`It said ${d.textContent}. Not 0. There IS no zero. Think.`));c.hook('title',id=>{if(id==='o2'){sfx.press();c.win(`There's the zero! The "o" in Button. Close enough.`)}else if(id==='o1')c.say(`Not that "o". That one retired after level 4.`)})},
+ solve(c){c.clickTitle('o2')}},
+{t:`Keep your eye on the real button.`,s:`Classic shell game. I'm very fast.`,hint:`Watch the glowing one before the shuffle. Follow it. Don't blink.`,
+ setup(c){c.hide();const slots=[34,60,86];const bs=slots.map(x=>{const b=c.el('button','mini','<span>?</span>');c.pos(b,x,30);return b});const real=bs[Math.floor(Math.random()*3)];c.s.real=real;let ready=false;const slotOf=[0,1,2];
+  real.classList.add('glow');c.say('Watch the REAL one. It glows. Briefly.');
+  c.after(1300,()=>{real.classList.remove('glow');c.say('Shuffle shuffle...');let n=0;const iv=c.every(430,()=>{const a=Math.floor(Math.random()*3),b=(a+1+Math.floor(Math.random()*2))%3;const ia=slotOf.indexOf(a),ib=slotOf.indexOf(b);slotOf[ia]=b;slotOf[ib]=a;c.pos(bs[ia],slots[b],30);c.pos(bs[ib],slots[a],30);sfx.click();if(++n>=7){c.cancel(iv);ready=true;c.say('Okay. Which one is real?')}})});
+  bs.forEach(b=>c.on(b,'click',()=>{if(c.done)return;if(!ready)return c.say('Wait for it!');sfx.press();b===real?c.win('Eagle eyes! Or a lucky guess. Either way.'):c.fail('Wrong one. The real one is laughing at you.')}))},
+ solve(c){c.advance(5000);c.s.real.click()}},
+{t:`This level is impossible.`,s:`No, really. Impossible. I checked.`,hint:`Persistence. Fail a few times. He'll crack.`,
+ setup(c){const m=['Impossible. As advertised.','Still impossible. Shocking.','Why are you still trying? ...ugh.'];if(c.attempts>=3){c.say(`...okay, you look sad. Press it one more time. I won't stop you.`);c.label('FINE');c.onPress(()=>c.win(`Pity points awarded. Don't tell the other levels.`))}else c.onPress(()=>c.fail(m[c.attempts]))},
+ solve(c,A){while(A.G.c.attempts<3){A.G.c.press();A.retry()}A.G.c.press()}},
+{t:`Ugh, so loud. Make it <span class=r>stop</span>.`,s:`MY EARS! Do something!`,hint:`Every game has a sound button. Top right.`,
+ setup(c){c.label('BEEP');c.btn.classList.add('flash');c.every(450,()=>sfx.alarm());if(S.muted)c.say('Already muted? Clever. Unmute, then mute it again.');c.onPress(()=>c.fail('Pressing it made it LOUDER. Science.'));c.hook('mute',m=>{if(m)c.win(`Sweet silence. (You can unmute now. Or not. I'm not your mom.)`)})},
+ solve(c){const b=document.getElementById('muteBtn');if(S.muted)b.click();b.click()}},
+{t:`The button fell down there somewhere.`,s:`It rolled. Waaay down. Go get it.`,hint:`Scroll down inside the game area. Keep going. Past the picture.`,
+ setup(c){c.hide();const sc=c.el('div','scroller');let h='<div class="sp"></div>';['&darr; scroll down','keep going...','still going','are we there yet?','no.'].forEach(s=>h+=`<div class="sign">${s}</div><div class="sp"></div>`);
+  h+=`<div class="sign">Here it is! &darr;</div><button class="mini decoy"><span>PRESS</span></button><div class="sign small">(that's a picture of a button)</div><div class="sp"></div><div class="sign">lol, almost</div><div class="sp"></div><button class="mini real"><span>REAL</span></button><div class="sign small">the bottom. finally.</div>`;sc.innerHTML=h;
+  c.on(sc.querySelector('.decoy'),'click',()=>c.fail(`That was a PICTURE of a button. The sign literally said so.`));c.s.real=sc.querySelector('.real');c.s.sc=sc;c.on(c.s.real,'click',()=>{sfx.press();c.win('Found it at the bottom of the abyss! Great scrolling.')})},
+ solve(c){c.s.sc.scrollTop=1e6;c.s.real.click()}},
+{t:`This level unlocks tomorrow.`,s:`Rules are rules. See you in 24 hours!`,hint:`Fiddle with the game's clock. The timer up top.`,
+ setup(c){c.label('LOCKED');c.btn.classList.add('grey');const cl=c.el('div','clock','23:59:59');c.pos(cl,62,18);let s=86399;const p=n=>String(n).padStart(2,'0');c.every(1000,()=>{s--;cl.textContent=`${p(Math.floor(s/3600))}:${p(Math.floor(s/60)%60)}:${p(s%60)}`});
+  c.after(4000,()=>c.say('If only there were a clock up there I could mess with... hypothetically.'));c.onPress(()=>c.fail('Locked! Come back tomorrow. Or, like, cheat.'));c.hook('timer',()=>{sfx.press();c.win('You messed with the clock. Time travel totally counts.')})},
+ solve(c){document.getElementById('timerBtn').click()}},
+{t:`How many letters are in "the answer"?`,s:`Quick maths. No calculators.`,hint:`Count the letters in the words "the answer". Skip the space.`,
+ setup(c){c.hide();[['6','6 is how many letters "answer" has. You forgot "the".'],['9',null],['10',`Spaces aren't letters, buddy.`],['"the answer"','Cute. Lawyer move. Still no.']].forEach(([l,m],k)=>{const b=c.el('button','opt',l);c.pos(b,k%2?80:46,22+Math.floor(k/2)*20);c.on(b,'click',()=>{if(c.done)return;sfx.click();m?c.fail(m):c.win('9! T-H-E-A-N-S-W-E-R. You counted the quote, not the question.')});if(!m)c.s.ok=b})},
+ solve(c){c.s.ok.click()}},
+{t:`Shhh. He's falling asleep. Press it once he's out.`,s:`*yaaawn* I'm not tired. You're tired.`,hint:`Wait until you see the zZz, then press.`,
+ setup(c){let asleep=false;narr.classList.add('sleepy');c.after(2200,()=>c.say('...so... comfy...'));c.after(4300,()=>{asleep=true;narr.classList.add('asleep');c.say('zZz... zZzzz...')});c.onPress(()=>asleep?c.win(`Pressed it while he slept. Total ninja. He'll never know.`):c.fail(`You woke him up. Now he's cranky AND tired.`))},
+ solve(c){c.advance(4400);c.press()}},
+{t:`FREEZE! <span class=r>Don't</span> move a muscle.`,s:`I'm watching your cursor. Don't. Move.`,hint:`Let go of the mouse/screen completely and wait 5 seconds.`,
+ setup(c){let base=null,armed=false;c.after(700,()=>{armed=true;c.say('Steady...')});const bad=m=>{if(armed)c.fail(m)};
+  c.on(document,'pointermove',e=>{if(!armed||!base){base=[e.clientX,e.clientY];return}if(Math.hypot(e.clientX-base[0],e.clientY-base[1])>6)bad('You moved! I saw that. I see everything.')});
+  c.on(document,'pointerdown',()=>bad(`Tapping is moving. Statues don't tap.`));c.hook('key',()=>bad('Typing counts as moving. Nice try.'));
+  c.after(2600,()=>c.say(`Don't... even... blink...`));c.after(5000,()=>c.win('Statue mode achieved. Pigeons are landing on you.'));c.onPress(()=>c.fail('You moved AND pressed it. Overachiever.'))},
+ solve(c){c.advance(5100)}},
+{t:`Press the <span style="color:#1a9e3a">GREEN</span> button.`,s:`It's red. I know. Deal with it.`,hint:`Pick the green paint first, then press.`,
+ setup(c){let col='red';const pal=c.el('div','palette');[['red',0],['green',115],['blue',225],['yellow',50]].forEach(([n,h])=>{const b=document.createElement('button');b.className='sw';b.style.setProperty('--h',h+'deg');b.setAttribute('aria-label',n);b.onclick=()=>{if(c.done)return;sfx.click();col=n;c.btn.style.filter=h?`hue-rotate(${h}deg)`:'';c.say(n==='green'?'Ooh, fancy.':`${n[0].toUpperCase()+n.slice(1)}. Bold choice.`)};pal.appendChild(b);if(n==='green')c.s.green=b});c.pos(pal,62,14);
+  c.onPress(()=>col==='green'?c.win('Green! You painted your way to victory. Picasso who?'):c.fail(`That's ${col}. Not green. Are you okay?`))},
+ solve(c){c.s.green.click();c.press()}},
+{t:`Enter the cheat code.`,s:`Old gamers know this one. Up, up...`,hint:`&uarr; &uarr; &darr; &darr; &larr; &rarr; &larr; &rarr; B A`,
+ setup(c){c.hide();const seq='UUDDLRLRBA';let p=0;const prog=c.el('div','prog','');c.pos(prog,62,14);
+  const inp=k=>{if(c.done)return;sfx.click();if(seq[p]===k)p++;else{p=k==='U'?(p===2?2:1):0;c.say('Nope. Start over. Up, up...')}prog.textContent='\u2022'.repeat(p);if(p===seq.length){sfx.fanfare();c.win('+30 lives! Kidding. You just win the level.')}};c.s.inp=inp;
+  const pad=c.el('div','pad',`<div class="dp"><button data-k="U">&uarr;</button><button data-k="L">&larr;</button><button data-k="R">&rarr;</button><button data-k="D">&darr;</button></div><div class="ab"><button data-k="B">B</button><button data-k="A">A</button></div>`);c.pos(pad,62,46);
+  pad.querySelectorAll('button').forEach(b=>c.on(b,'click',()=>inp(b.dataset.k)));c.s.pad=pad;
+  c.hook('key',e=>{const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',b:'B',B:'B',a:'A',A:'A'}[e.key];if(m){e.preventDefault();inp(m)}})},
+ solve(c){[...'UUDDLRLRBA'].forEach(k=>c.s.pad.querySelector(`[data-k="${k}"]`).click())}},
+{t:`Error 404: Button not found.`,s:`Oh no. Oh no no no. The game broke.`,hint:`That zero looks awfully round. And pressable.`,
+ setup(c){c.hide();const e=c.el('div','err',`<div class="e1">ERROR</div><div class="e404">4<span class="z">0</span>4</div><div class="e2">Button not found.</div><button class="lnk">Reload page</button>`);c.pos(e,62,42);c.s.z=e.querySelector('.z');
+  c.on(c.s.z,'click',()=>{sfx.press();c.win('You pressed the zero! It was a button all along. Error fixed!')});c.on(e.querySelector('.lnk'),'click',()=>c.fail(`Reloading won't help. Neither will you, apparently.`))},
+ solve(c){c.s.z.click()}},
+{t:`There's definitely no button here.`,s:`Nothing behind that note. Promise.`,hint:`Peel (drag) the sticky note away.`,
+ setup(c){stage.style.touchAction='none';const n=c.el('div','note','NOTHING<br>BEHIND<br>HERE.<small>definitely not a button</small>');c.pos(n,62,56);c.s.note=n;c.label('HI :)');
+  c.drag(n,{end:(x,y,m)=>c.say(m<8?`It's a sticky note. Peel it off!`:'Huh. Would you look at that.')});c.onPress(()=>c.win('Peekaboo! Found it. The note lied. Notes do that.'))},
+ solve(c){c.dragTo(c.s.note,0,-c.H());c.press()}},
+{t:`Unplug it before it explodes!`,s:`It's ticking! Why is it ticking?!`,hint:`Drag the plug out of the wall socket. Don't press the bomb.`,
+ setup(c){stage.style.touchAction='none';c.pos(c.btn,56,44);c.scale(.8);let t=9;c.label(t);const cab=c.el('div','cablewrap','<svg width="100%" height="100%"><path fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/></svg>');const path=cab.querySelector('path');
+  const sock=c.el('div','socket','<i></i><i></i>');c.pos(sock,90,82);const plug=c.el('div','plug','<i></i><i></i>');c.pos(plug,'calc(90% - 36px)','82%');c.s.plug=plug;
+  const draw=()=>{const bx=c.btn.offsetLeft,by=c.btn.offsetTop+30,px=plug.offsetLeft,py=plug.offsetTop;path.setAttribute('d',`M${bx} ${by} C ${bx} ${by+90}, ${px-90} ${py}, ${px-14} ${py}`)};draw();
+  let home;c.drag(plug,{start:()=>{home=home||[plug.offsetLeft,plug.offsetTop]},move:draw,end:(x,y)=>{if(Math.hypot(x-home[0],y-home[1])>55){sfx.pop();c.win('Unplugged! Crisis averted. You absolute hero.')}else{plug.style.left=home[0]+'px';plug.style.top=home[1]+'px';draw()}}});
+  c.every(1000,()=>{t--;c.label(t);if(t<=3&&t>0)c.say(`IT'S GONNA BLOW!`);if(t<=0){sfx.boom();stage.classList.add('boom');c.fail(`BOOM. You should've unplugged it.`)}});
+  c.onPress(()=>{sfx.boom();stage.classList.add('boom');c.fail('You pressed the bomb. With your finger. Bold.')})},
+ solve(c){c.dragTo(c.s.plug,-120,-40)}},
+{t:`<span class="flip">Something is off about this level.</span>`,s:`Is it me, or is everything upside down?`,hint:`Turn the knob back to 0&deg; (or rotate your phone), then press.`,
+ setup(c){const rot=c.el('div','rot');rot.appendChild(c.btn);c.label('PRESS ME');let a=180;const set=v=>{a=v;rot.style.transform=`rotate(${a}deg)`};set(180);
+  const w=c.el('div','knob',`<label>Rotation knob</label><input type="range" min="-180" max="180" value="180">`);c.pos(w,62,93);const r=w.querySelector('input');c.s.r=r;c.on(r,'input',()=>set(+r.value));
+  c.on(window,'orientationchange',()=>{r.value=0;set(0);c.say('Whoa, you rotated your whole phone. Dedication.')});
+  c.onPress(()=>Math.abs(a)<=12?c.win('Right side up! Your neck thanks you.'):c.fail(`You pressed it at ${a}&deg;. Now it's dizzy and so am I.`))},
+ solve(c){c.s.r.value=0;c.s.r.dispatchEvent(new Event('input'));c.press()}},
+{t:`<span data-k="all">Press everything <span class=r>EXCEPT</span> the button.</span>`,s:`Everything. Every. Thing. Except that.`,hint:`Four things: me (the stick guy), the title, the level text, and a star hiding in a corner.`,
+ setup(c){const got=new Set();const pr=c.el('div','prog','0 / 4 things pressed');c.pos(pr,62,93);const star=c.el('button','star',ICON.star);c.pos(star,93,8);c.s.star=star;
+  const mark=k=>{if(c.done||got.has(k))return;got.add(k);sfx.pop();pr.textContent=got.size+' / 4 things pressed';c.say(['','Yep, that counts.','Getting there.','One more thing...',''][got.size]);if(got.size===4)c.win('You pressed EVERYTHING else. So thorough. So weird.')};
+  c.hook('narr',()=>mark('narr'));c.hook('title',()=>mark('title'));c.hook('text',()=>mark('text'));c.on(star,'click',()=>mark('star'));
+  c.onPress(()=>c.fail('EXCEPT. The. Button. I said it in capitals.'))},
+ solve(c){c.clickNarr();c.clickTitle('0');c.clickText('all');c.s.star.click()}},
+{t:`Simon says: follow the instructions.`,s:`Only when Simon says. Simon is very strict.`,hint:`Only tap when the sentence starts with "Simon says". Otherwise freeze.`,
+ setup(c){c.hide();const cmd=c.el('div','cmd','Get ready...');c.pos(cmd,58,14);const L=c.el('button','pad2','LEFT'),R=c.el('button','pad2','RIGHT');c.pos(L,46,50);c.pos(R,80,50);c.s.L=L;c.s.R=R;
+  const steps=[['Simon says: tap LEFT','L'],['Tap RIGHT.',''],['Simon says: tap RIGHT','R'],[`Simon says: don't tap anything.`,''],['Simon says: tap LEFT twice','LL']];let i=-1,taps='',tm=null;
+  const next=()=>{i++;if(i>=steps.length)return c.win('Simon is impressed. Simon is never impressed.');taps='';cmd.textContent=steps[i][0];cmd.classList.remove('in');void cmd.offsetWidth;cmd.classList.add('in');tm=c.after(steps[i][1]?3500:2500,()=>{if(steps[i][1])c.fail('Too slow! Simon got bored and left.');else next()})};
+  const tap=k=>{if(c.done)return;sfx.click();if(i<0)return c.say('Wait for Simon!');const need=steps[i][1];if(!need)return c.fail(i===1?`Simon didn't say! Rookie mistake.`:`Simon said DON'T. Listen to Simon.`);if(taps.length>=need.length)return;taps+=k;if(!need.startsWith(taps))return c.fail(`Wrong side! Simon said ${need[0]==='R'?'RIGHT':'LEFT'}.`);if(taps===need){c.cancel(tm);c.after(400,next)}};
+  c.on(L,'click',()=>tap('L'));c.on(R,'click',()=>tap('R'));c.after(1200,next)},
+ solve(c){c.advance(1300);c.s.L.click();c.advance(500);c.advance(2600);c.s.R.click();c.advance(500);c.advance(2600);c.s.L.click();c.s.L.click();c.advance(500)}},
+{t:`Press it on <span class=r>GO</span>. Only on GO.`,s:`Reflex test! Don't jump the gun.`,hint:`Wait for exactly "GO". Not GOOSE. Not OG.`,
+ setup(c){const seq=['READY...','NO','SO','GOOSE','NO','OG','GO','NOPE','GO?!','NO','GO'];let i=0;const w=c.el('div','word',seq[0]);c.pos(w,62,18);c.s.w=seq[0];
+  c.every(850,()=>{i=(i+1)%seq.length;w.textContent=seq[i];c.s.w=seq[i];w.classList.toggle('go',seq[i]==='GO')});
+  c.onPress(()=>c.s.w==='GO'?c.win('Lightning reflexes! Or you read slowly. Either way.'):c.fail(`It said "${c.s.w}". Does that look like GO to you?`))},
+ solve(c){for(let k=0;k<300&&c.s.w!=='GO';k++)c.advance(50);c.press()}},
+{t:`Say hi to the button. <i>Properly.</i>`,s:`He's sensitive. Don't just poke him.`,hint:`Read his name tag. Type his name.`,
+ setup(c){c.pos(c.btn,60,64);c.scale(.85);const tag=c.el('div','tag','<b>HELLO</b><small>my name is</small><i>Gerald</i>');c.pos(tag,87,44);
+  const w=c.input('say something nice...',v=>/gerald/i.test(v)?c.win(`Gerald blushes. Nobody calls him by his name. You're his best friend now.`):c.fail(`"${esc(v)}"? That's not his name. Gerald is hurt.`));c.pos(w,58,14);
+  c.onPress(()=>c.fail(`You don't just POKE Gerald. Introduce yourself.`))},
+ solve(c){c.s.inp.value='Hi Gerald!';c.s.submit()}},
+{t:`Let the button press <span class=r>YOU</span>.`,s:`It's coming for you. Don't flinch.`,hint:`Put your cursor (or finger) on the screen and hold perfectly still. Let it come to you.`,
+ setup(c){stage.style.touchAction='none';c.scale(.6);c.label('BOOP');c.btn.style.pointerEvents='none';c.btn.classList.add('nomove');let x=c.W()*.8,y=c.H()*.25,tgt=null;const put=()=>{c.btn.style.left=x+'px';c.btn.style.top=y+'px'};put();c.s.set=(a,b)=>{tgt=[a,b]};
+  c.on(stage,'pointermove',e=>{tgt=c.local(e)});c.on(stage,'pointerdown',e=>{const p=c.local(e);if(Math.hypot(p[0]-x,p[1]-y)<45)return c.fail('NO. It presses YOU. Hold still and let it come.');tgt=p});
+  c.on(stage,'pointerup',e=>{if(e.pointerType==='touch')tgt=null});c.on(stage,'pointerleave',e=>{if(e.pointerType==='mouse')tgt=null});
+  c.every(30,()=>{if(!tgt){y+=Math.sin(vnow/300)*.6;put();return}const dx=tgt[0]-x,dy=tgt[1]-y,d=Math.hypot(dx,dy);if(d<14){sfx.press();c.btn.classList.add('down');return c.win('Boop. The button pressed you. Role reversal complete.')}const sp=Math.min(d,3);x+=dx/d*sp;y+=dy/d*sp;put()})},
+ solve(c){c.s.set(c.W()*.35,c.H()*.6);c.advance(9000)}},
+{t:`Loading final levels... <b>99%</b>`,s:`Stuck at 99%. Classic. Give it a little push?`,hint:`Drag the bar's knob to the right.`,
+ setup(c){stage.style.touchAction='none';c.label('LOADING');c.btn.classList.add('grey');const bar=c.el('div','lbar','<i></i><b>99%</b>');c.pos(bar,58,20);const k=c.el('div','lknob');c.pos(k,91,20);c.s.k=k;let home;
+  c.drag(k,{start:()=>{home=home||[k.offsetLeft,k.offsetTop]},move:()=>{k.style.top=home[1]+'px'},end:x=>{if(x-home[0]>14){bar.querySelector('i').style.width='100%';bar.querySelector('b').textContent='100%';sfx.pop();c.win('100%! You literally pushed it over the line.')}else{k.style.left=home[0]+'px';k.style.top=home[1]+'px'}}});
+  c.onPress(()=>c.fail(`It's still loading! Patience: not your thing.`))},
+ solve(c){c.dragTo(c.s.k,40,0)}},
+{t:`The button mirrors you.`,s:`Wherever you go, it goes the opposite way. Spooky.`,hint:`Where is your mirror image the same as you? Dead center.`,
+ setup(c){stage.style.touchAction='none';c.scale(.55);c.btn.style.pointerEvents='none';c.btn.classList.add('nomove');const mv=(x,y)=>{c.btn.style.left=(c.W()-x)+'px';c.btn.style.top=(c.H()-y)+'px'};
+  const tap=(x,y)=>{if(c.done)return;mv(x,y);if(Math.hypot(x-(c.W()-x),y-(c.H()-y))<50){sfx.press();c.btn.classList.add('down');c.win('You found the center of the universe. It had nowhere to run.')}else c.say(rnd([`Missed! It's always on the opposite side.`,'Whoosh. Mirror dodge.','So close. Not really.']))};
+  c.on(stage,'pointermove',e=>mv(...c.local(e)));c.on(stage,'pointerdown',e=>tap(...c.local(e)));c.s.tap=tap;c.bound=true},
+ solve(c){c.s.tap(c.W()/2,c.H()/2)}},
+{t:`Prove you're not a robot.`,s:`Robots can't press buttons. Legally.`,hint:`ALL squares with buttons. Shirts have buttons too.`,
+ setup(c){c.hide();const cells=['btn','sun','shirt','cloud','btn','tree','house','btn','car'],need=[0,2,4,7],sel=new Set();const p=c.el('div','captcha',`<div class="ch">Select all squares with <b>BUTTONS</b></div><div class="cg"></div><button class="verify">VERIFY</button>`);c.pos(p,62,48);const g=p.querySelector('.cg');
+  cells.forEach((n,k)=>{const b=document.createElement('button');b.className='cc';b.innerHTML=ICON[n];b.onclick=()=>{sfx.click();sel.has(k)?sel.delete(k):sel.add(k);b.classList.toggle('on',sel.has(k))};g.appendChild(b)});c.s.cells=[...g.children];c.s.verify=p.querySelector('.verify');
+  c.s.verify.onclick=()=>{if(c.done)return;if(need.every(k=>sel.has(k))&&sel.size===need.length)return c.win('Even the shirt buttons! Definitely human. Or a very pedantic robot.');if([0,4,7].every(k=>sel.has(k))&&sel.size===3)return c.fail('You missed the shirt. Shirts have buttons. Beep boop, robot detected.');c.fail('Beep boop. Robot detected. Please report to the nearest toaster.')}},
+ solve(c){[0,2,4,7].forEach(k=>c.s.cells[k].click());c.s.verify.click()}},
+{t:`Is this... the end?`,s:`Wait... is that it? Did we do it?`,hint:`The story isn't over until the last dot. Look closely at the ending text.`,
+ setup(c){c.hide();c.after(1100,()=>{sfx.fanfare();const f=document.createElement('div');f.className='ov end fake';f.style.zIndex=40;
+  f.innerHTML=confettiHTML()+`<div class="box"><div class="mh win">YOU WON!</div><p>Congratulations! You beat Don't Press the Button<span class="dot">.</span></p><div class="stats"><div><b>${N}</b>levels</div><div><b>${S.deaths}</b>fails</div><div><b>${fmt(S.time)}</b>time</div></div><button class="big" id="fakeAgain">Play again</button><div class="row"><button id="fakeShare">Share</button><button id="fakeLv">Levels</button></div><small class="credits">Thanks for playing! Made with love and sweat.</small></div>`;
+  document.body.appendChild(f);c.offs.push(()=>f.remove());c.s.dot=f.querySelector('.dot');
+  c.on(c.s.dot,'click',()=>{sfx.press();c.win(`You found the hidden dot! The ending was FAKE. There's one more level. A real one.`)});
+  f.querySelector('#fakeAgain').onclick=()=>c.fail(`You fell for the fake ending! There's ONE more level. Gullible.`);f.querySelector('#fakeShare').onclick=share;f.querySelector('#fakeLv').onclick=()=>c.fail(`Menus are for quitters. The game isn't over.`)})},
+ solve(c){c.advance(1200);c.s.dot.click()}},
+{t:`FINAL LEVEL: <span class=r>Don't</span> press the button. (I mean it.)`,s:`Please... it's the last one... have mercy...`,hint:`Press it until it gives up. Then STOP pressing and wait.`,
+ setup(c){let hp=8;const bar=c.el('div','hp','<i></i><b>BUTTON HP 8/8</b>');c.pos(bar,62,8);c.label('BOSS');const fill=bar.querySelector('i');
+  c.after(6000,()=>{if(hp===8)c.say(`You're... actually listening? It's the FINALE. Fight it!`)});
+  c.onPress(()=>{if(hp<=0)return c.fail('It surrendered! You pressed a surrendered button. Monster.');hp--;fill.style.width=hp/8*100+'%';bar.querySelector('b').textContent=`BUTTON HP ${hp}/8`;c.btn.classList.remove('hit');void c.btn.offsetWidth;c.btn.classList.add('hit');
+   if(hp>0){c.pos(c.btn,40+Math.random()*48,32+Math.random()*42);c.say(['OW!','Not the face!','I have a family!','Mercy!',`I'm telling!`,'Why are you like this?!','Okay, that one hurt.'][hp%7])}
+   else{c.label('I GIVE UP');c.btn.classList.add('grey');c.say('OKAY OKAY. You win! STOP pressing. Just... wait.');c.after(3000,()=>c.win('The button is defeated. Not by pressing, but by knowing when to STOP. You did it. For real.'))}})},
+ solve(c){for(let i=0;i<8;i++)c.press();c.advance(3100)}}
+];
+const N=LEVELS.length;
+// ---------- global wiring ----------
+$('#title').addEventListener('click',e=>{const s=e.target.closest('.ch');if(!s||isPaused())return;sfx.click();if(!fire('title',s.dataset.id,s.textContent)){s.classList.remove('wob');void s.offsetWidth;s.classList.add('wob')}});
+$('#lvtext').addEventListener('click',e=>{const s=e.target.closest('[data-k]');if(s)fire('text',s.dataset.k)});
+narr.addEventListener('click',()=>{if(isPaused())return;if(!fire('narr')){say(rnd([`Don't poke me. I'm sweating enough.`,'Hey! Personal space.',`I'm just the narrator. Leave me alone.`,'Ow.']));narr.classList.remove('panic');void narr.offsetWidth;narr.classList.add('panic')}});
+document.addEventListener('keydown',e=>{if(e.target&&e.target.tagName==='INPUT')return;if(isPaused())return;fire('key',e)});
+document.addEventListener('visibilitychange',()=>fire(document.hidden?'away':'back'));
+window.addEventListener('blur',()=>fire('away'));window.addEventListener('focus',()=>fire('back'));
+$('#hintBtn').onclick=()=>{if(!G.c||isPaused())return;if(fire('hint'))return;const i=G.li;showAd(()=>{if(G.li!==i)return;const h=LEVELS[i].hint;const hb=$('#hintbox');hb.hidden=false;hb.innerHTML='<b>Hint:</b> '+h},'rewarded')};
+$('#skipBtn').onclick=()=>{if(!isPaused())skipLevel()};
+$('#shareBtn').onclick=share;
+$('#menuBtn').onclick=openMenu;$('#menuClose').onclick=()=>{$('#menuOv').hidden=true;if(!G.c)startLevel(S.cur)};
+$('#resetBtn').onclick=e=>{const b=e.currentTarget;if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='Tap again to reset';setTimeout(()=>{b.dataset.arm='';b.textContent='Reset progress'},2500);return}const m=S.muted;S=DEF();S.muted=m;persist();b.dataset.arm='';startLevel(0)};
+$('#timerBtn').onclick=()=>{if(isPaused())return;if(!fire('timer'))toast("That's your total play time. Embarrassing.")};
+$('#muteBtn').onclick=()=>{S.muted=!S.muted;ac();if(master)master.gain.value=S.muted?0:.5;persist();hud();fire('mute',S.muted)};
+let lastT=performance.now(),saveAcc=0;
+setInterval(()=>{const t=performance.now(),dt=Math.min(250,t-lastT);lastT=t;if(isPaused()||!G.c)return;tick(dt);if(!document.hidden){S.time+=dt/1000;$('#timerBtn').textContent=fmt(S.time);saveAcc+=dt;if(saveAcc>5000){saveAcc=0;persist()}}},40);
+// test hook (used by automated tests; harmless for players)
+window.__test={N,go:i=>startLevel(i),solve:()=>LEVELS[G.li].solve(G.c,{G,retry:()=>startLevel(G.li)}),advance,retry:()=>startLevel(G.li),
+ state:()=>({li:G.li,lastWon:G.lastWon,done:G.c?G.c.done:null,deaths:S.deaths,unlocked:S.unlocked,cur:S.cur,ended:!$('#endOv').hidden,modal:!$('#modal').hidden,ad:!$('#adOv').hidden}),
+ set fastAds(v){T.fastAds=!!v},get fastAds(){return T.fastAds},save:()=>JSON.parse(JSON.stringify(S))};
+startLevel(Math.min(S.cur||0,S.unlocked-1));
+</script>
+</body>
+</html>
