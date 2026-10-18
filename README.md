@@ -5,3 +5,5 @@
 - Progress, fails and time saved in localStorage
 - `showAd(onDone, kind)` is a stub: wire it to CrazyGames / Poki SDK for rewarded hints/skips and interstitials every 10 levels
 - `window.__test` exposes per-level `solve()` for automated testing
+
+Play: https://dont-press-the-button-umber.vercel.app
